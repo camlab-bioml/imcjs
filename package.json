@@ -1,0 +1,35 @@
+{
+  "name": "imcjs",
+  "version": "0.1.0-a1",
+  "description": "Client-side parser for Imaging Mass Cytometry MCD and TXT files",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsup": "^8.0.0",
+    "typescript": "^6.0.3",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.9.10",
+    "fast-xml-parser": "^5.8.0"
+  }
+}

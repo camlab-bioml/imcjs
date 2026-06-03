@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": "src"
+  },
+  "include": ["src"]
+}
+
