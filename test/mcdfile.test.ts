@@ -27,13 +27,13 @@ describe("MCD parser", () => {
     const acq = mcd.readAcquisition(mcd.slides[0].acquisitions[0]);
     const [numChannels, height, width] = acq.shape;
     expect(acq.data.length).toBe(height * width * numChannels);
+    expect(mcd.acquisitionShape(mcd.slides[0].acquisitions[0])).toStrictEqual([numChannels, height, width]);
+    
 
     const slideRead = await mcd.readSlide(mcd.slides[0])
     expect(slideRead instanceof Uint8Array).toBe(true);
 
   });
-
-
 
   it("Parse multi-ROI file", async () => {
     const filepath = path.join(
