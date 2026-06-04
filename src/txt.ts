@@ -1,6 +1,7 @@
 import type { AcquisitionBase, NDArray } from "./data";
 import { MCDParserError } from "./mcd_parser";
 
+
 /**
  * A class for reading IMC .txt acquisition files.
  *
@@ -20,7 +21,6 @@ export class TXTFile implements AcquisitionBase {
     this._text = text;
   }
 
-  // ── Construction ────────────────────────────────────────────────────────────
 
   static async fromFile(file: File): Promise<TXTFile> {
     const text = await file.text();
@@ -31,7 +31,6 @@ export class TXTFile implements AcquisitionBase {
     return new TXTFile(text);
   }
   
-  // ── AcquisitionBase interface ────────────────────────────────────────────────
 
   get numChannels(): number {
     return this._getHeaders().filter((h) => !["Start_push", "End_push", "Pushes_duration", "X", "Y", "Z"].includes(h)).length;
@@ -66,7 +65,6 @@ export class TXTFile implements AcquisitionBase {
     return this._channelHeaders();
   }
 
-  // ── Data reading ─────────────────────────────────────────────────────────────
 
   /**
    * Reads the acquisition as a Float32Array with layout [c, y, x].
@@ -127,7 +125,6 @@ export class TXTFile implements AcquisitionBase {
     return {data: out, shape: [c, h, w]}
   }
 
-  // ── Private helpers ──────────────────────────────────────────────────────────
 
   private static readonly SYSTEM_COLUMNS = new Set([
     "Start_push",

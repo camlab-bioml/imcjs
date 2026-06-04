@@ -301,14 +301,14 @@ export class MCDParser {
         _imageEndOffset:   this.toInt(m["ImageEndOffset"]),
       };
 
-      // Wire panorama → acquisitions
+      // link panorama → acquisitions
       for (const acq of panoAcqs) {
         (acq as { panorama: Panorama }).panorama = pano;
       }
 
       panoramasById.set(id, pano);
 
-      // Wire to slide
+      // link slides and panorama
       const slide = slideId !== null ? slidesById.get(slideId) : null;
       if (slide) {
         (pano as { slide: Slide }).slide = slide;
