@@ -24,7 +24,6 @@ export class MCDFile {
     this._buffer = buffer;
   }
 
-  // ── Construction ──────────────────────────────────────────────────────────
 
   /** Parse an MCD file from a browser File object. */
   static async fromFile(file: File): Promise<MCDFile> {
@@ -37,7 +36,6 @@ export class MCDFile {
     return new MCDFile(buffer);
   }
 
-  // ── Core properties ───────────────────────────────────────────────────────
 
   /**
    * Full metadata in proprietary XML format.
@@ -170,7 +168,7 @@ export class MCDFile {
   acquisitionShape(acquisition: Acquisition): [number, number, number] {
     return [acquisition.numChannels, acquisition.heightPx ?? 0, acquisition.widthPx ?? 0];
   }
-
+  
   /**
    * Reads a slide image as raw bytes (Uint8Array).
    * The bytes represent the encoded image (e.g. JPEG/PNG) as stored in the file.
@@ -263,7 +261,6 @@ export class MCDFile {
     return raw;
   }
 
-  // ── Private helpers ───────────────────────────────────────────────────────
 
   /**
    * Locates and extracts the XML schema embedded at the end of the MCD file.
