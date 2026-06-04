@@ -11,7 +11,7 @@ describe("TXT parser", () => {
           "fixtures",
           "test.txt"
         );
-
+        
     const buffer = fs.readFileSync(filepath);
 
     const file = new File([buffer], "test.txt", {
