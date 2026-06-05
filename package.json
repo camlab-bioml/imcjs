@@ -1,6 +1,6 @@
 {
   "name": "imcjs",
-  "version": "0.1.0-a1",
+  "version": "0.1.1-a1",
   "private": true,
   "description": "Client-side parser for Imaging Mass Cytometry MCD and TXT files",
   "type": "module",

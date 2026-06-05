@@ -10,6 +10,7 @@ describe("MCD parser", () => {
       "fixtures",
       "test.mcd"
     );
+  
   it("Parses an MCD file from array buffer", async() => {
     
     const buffer = fs.readFileSync(filepath);
@@ -21,6 +22,9 @@ describe("MCD parser", () => {
     
     const mcd = MCDFile.fromArrayBuffer(arrayBuffer);
     expect(mcd.schemaXml).toContain("SAT_Test_chr10-h54h54-Gd158_2_18.mcd");
+
+    expect(mcd.acquisitionIDs).toStrictEqual([18]);
+    expect(mcd.acquisitions[0].id).toBe(18);
     expect(mcd.acquisitionNames.length).toBe(1);
     expect(mcd.slides[0].acquisitions[0].channelNames.length).toStrictEqual(
     mcd.slides[0].acquisitions[0].channelLabels.length);
@@ -67,12 +71,26 @@ describe("MCD parser", () => {
     
     const mcd = await MCDFile.fromFile(file);
     expect(mcd.metadata).toStrictEqual(mcd.schemaXml);
+
+    const acqIDsKnown = new Set([1, 2, 3, 4, 5, 6]);
+
+    expect(mcd.acquisitionIDs.length === acqIDsKnown.size && [...mcd.acquisitionIDs].every(x => 
+      acqIDsKnown.has(x))).toBe(true);
+
+    // Check that the 4th acquisition has the same position in the IDs as the names
+    expect(mcd.acquisitionIDs.indexOf(4)).toBe(mcd.acquisitionNames.indexOf('Glycerol'))
     
+    expect(mcd.acquisitionNames.includes('EtOH')).toBe(true);
+    expect(mcd.acquisitionNames.includes('ROI1')).toBe(false);
+
     expect(mcd.acquisitionNames.length).toBe(6);
-    const acq = mcd.readAcquisition(mcd.slides[0].acquisitions[2]);
-    const [numChannels, height, width] = acq.shape;
-    expect(acq.data.length).toBe(height * width * numChannels);
-    expect(numChannels).toBe(11);
+
+    for (const acq of mcd.slides[0].acquisitions) {
+      const acqRead = mcd.readAcquisition(acq);
+      const [numChannels, height, width] = acqRead.shape;
+      expect(acqRead.data.length).toBe(height * width * numChannels);
+      expect(numChannels).toBe(11);
+    }
 
     const pano = await mcd.readPanorama(mcd.slides[0].panoramas[0])
     expect(pano instanceof Uint8Array).toBe(true);

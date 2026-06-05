@@ -91,6 +91,19 @@ export class MCDFile {
   }
 
   /**
+   * All acquisition IDs (position integers)
+   * Returns null if schema XML has not been parsed yet (call .slides first).
+   */
+  get acquisitionIDs(): readonly (number)[]{
+    if (this._slides === null) {
+      this.parseSlides()
+    };
+    if (this._slides === null) return [];
+    return this.slides.flatMap((s) => s.acquisitions.map((a) => a.id));
+  }
+
+
+  /**
    * Reads an IMC acquisition as a Float32Array laid out [c, y, x].
    * The shape is [numChannels, height, width].
    *

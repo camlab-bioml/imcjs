@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1-a1] - 2026-06-05
+
+### Added
+
+- Array of acquisitions IDs available through `MCDFile.acquisitionIDs`
+
+
 ## [0.1.0-a1] - 2026-06-03
 
 - Initial dev implementation, focus on reading raw acuisitions as float32 arrays
