@@ -17,6 +17,9 @@ Build: `npm run build`
 ### Usage
 
 ```
+import { MCDFile } from "imcjs";
+import fs from "node:fs";
+
 const buffer = fs.readFileSync("path_to_mcd");
 const file = new File([buffer], "mcdMCD.mcd", {type: "text/plain"}); 
 const mcd = await MCDFile.fromFile(file);
