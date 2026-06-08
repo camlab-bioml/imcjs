@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 
-import { MCDFile } from "../src/mcd_file";
+import { MCDFile, MCDParserError } from "../src/mcd_file";
 
 describe("MCD parser", () => {
    const filepath = path.join(
@@ -39,7 +39,7 @@ describe("MCD parser", () => {
 
   });
 
-  it("Parses an MCD direcly from file", async() => {
+  it("Parses an MCD directly from file", async() => {
 
     const buffer = fs.readFileSync(filepath);
     const file = new File([buffer], "test.mcd", {type: "text/plain"}); 
@@ -53,6 +53,29 @@ describe("MCD parser", () => {
     expect(acq.data.length).toBe(height * width * numChannels);
     expect(mcd.acquisitionShape(mcd.slides[0].acquisitions[0])).toStrictEqual([numChannels, height, width]);
     
+    // slice the acquisition, with indices in a non sequential order
+    const acqSlide = mcd.readAcquisition(mcd.slides[0].acquisitions[0],
+      {channels: [2, 4, 0]}
+    );
+    
+    expect(acqSlide.shape).toStrictEqual([3, 500, 500]);
+
+    // expect the first acquisition in the slice to be the third in the full
+    expect(acqSlide.data[0]).toBe(acq.data[2*(500 * 500)]);
+    expect(acqSlide.data[500 * 500]).toBe(acq.data[4*(500 * 500)]);
+    // assert that the third position acquisition in the slice is the first one in full
+    expect(acqSlide.data[2*(500 * 500)]).toBe(acq.data[0]);
+
+
+    // slice the acquisition, additionally with a sub-region of all channels
+    const acqSlideROI = mcd.readAcquisition(mcd.slides[0].acquisitions[0],
+      {channels: [0, 2, 4, 6], region: [1, 0, 100, 100]}
+    );
+
+    expect(acqSlideROI.shape).toStrictEqual([4, 100, 99]);
+    // expect the first element to match the original second because of a one-index slice
+    expect(acqSlideROI.data[0]).toBe(acq.data[1]);
+
 
     const slideRead = await mcd.readSlide(mcd.slides[0])
     expect(slideRead instanceof Uint8Array).toBe(true);
@@ -97,4 +120,18 @@ describe("MCD parser", () => {
 
   });
 
+  it("Throw errors on malformed MCD", async () => {
+    const filepath = path.join(
+      __dirname,
+      "fixtures",
+      "error.mcd"
+    );
+    
+    const buffer = fs.readFileSync(filepath);
+    const file = new File([buffer], "error.mcd", {type: "text/plain"}); 
+    
+    const mcd = await MCDFile.fromFile(file);
+  
+    expect(() => mcd.schemaXml).toThrow(MCDParserError)});
+    
 });

@@ -114,6 +114,7 @@ export class MCDFile {
   readAcquisition(
     acquisition: Acquisition,
     options?: {
+      // IMP: the output array will store the channel arrys in the order in which they are passed to options.channels
       channels?: number[];
       region?: readonly [number, number, number, number];
     },
@@ -126,7 +127,7 @@ export class MCDFile {
         `Acquisition ${acquisition.id} has no data offsets.`,
       );
     }
-
+    
     const raw = this._readBlobAsFloat32(start, end);
 
     // numChannels here is signal channels only (X/Y/Z excluded by the parser).
