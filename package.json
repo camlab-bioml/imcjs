@@ -7,11 +7,11 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-  ".": {
-    "types": "./dist/index.d.ts",
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
-  }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
   },
   "files": [
     "dist"
@@ -20,10 +20,12 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "^4.1.8",
     "tsup": "^8.0.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"

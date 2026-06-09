@@ -18,11 +18,9 @@ Build: `npm run build`
 
 ```
 import { MCDFile } from "imcjs";
-import fs from "node:fs";
 
-const buffer = fs.readFileSync("path_to_mcd");
-const file = new File([buffer], "mcdMCD.mcd", {type: "text/plain"}); 
-const mcd = await MCDFile.fromFile(file);
+let filesUploaded = Array.from(e.target.files);
+const mcd = await MCDFile.fromFile(filesUploaded[0]);
 
 # Read the first acquisition, and view the array data and shape (C, H, W)
 const acqRead = mcd.readAcquisition(mcd.slides[0].acquisitions[0]);

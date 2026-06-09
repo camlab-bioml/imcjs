@@ -1,6 +1,5 @@
 import type { Acquisition, Panorama, Slide, NDArray } from "./data";
 import { MCDParser, MCDParserError } from "./mcd_parser";
-
 export { MCDParserError };
 
 /**
@@ -171,7 +170,7 @@ export class MCDFile {
         }
       }
     }
-
+    
     return {data: out, shape: [outC, outH, outW]}
   }
 
@@ -237,7 +236,7 @@ export class MCDFile {
       acquisition._beforeAblationImageEndOffset,
     );
   }
-
+  
   /**
    * Reads the before-ablation image and returns an ImageBitmap or Uint8Array.
    * Returns null if not available.

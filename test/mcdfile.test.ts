@@ -117,6 +117,9 @@ describe("MCD parser", () => {
 
     const pano = await mcd.readPanorama(mcd.slides[0].panoramas[0])
     expect(pano instanceof Uint8Array).toBe(true);
+    
+    expect(await mcd.readBeforeAblationImage(mcd.slides[0].acquisitions[0])).toBeNull();
+    expect(await mcd.readAfterAblationImage(mcd.slides[0].acquisitions[0])).toBeNull();
 
   });
 
