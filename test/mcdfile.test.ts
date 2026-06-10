@@ -21,6 +21,7 @@ describe("MCD parser", () => {
     );
     
     const mcd = MCDFile.fromArrayBuffer(arrayBuffer);
+    expect(mcd.slides.length).toBe(1);
     expect(mcd.schemaXml).toContain("SAT_Test_chr10-h54h54-Gd158_2_18.mcd");
 
     expect(mcd.acquisitionIDs).toStrictEqual([18]);

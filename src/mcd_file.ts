@@ -344,7 +344,7 @@ export class MCDFile {
     }
     return -1;
   }
-
+  
   /** Reads bytes [start, end) as a Float32Array (copies to ensure 4-byte alignment). */
   private _readBlobAsFloat32(start: number, end: number): Float32Array {
     if (start < 0 || end > this._buffer.byteLength || start >= end) {

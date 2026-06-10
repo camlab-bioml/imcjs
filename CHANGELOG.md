@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2-a1] - 2026-06-10
+
+### Fixed
+
+- Proper dimensions output for flattened TXT file `NDArray` if `X` and `Y` coordinate columns are missing
+
+
 ## [0.1.1-a1] - 2026-06-05
 
 ### Added

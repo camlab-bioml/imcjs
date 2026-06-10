@@ -92,7 +92,7 @@ export class TXTFile implements AcquisitionBase {
           out[ci * n + r] = rows[r][channelIndices[ci]] ?? 0;
         }
       }
-      return {data: out, shape: [1, n, c]}
+      return {data: out, shape: [c, 1, n]}
     }
     
     // Determine image bounds
@@ -113,6 +113,7 @@ export class TXTFile implements AcquisitionBase {
     for (const row of rows) {
       const x = Math.round(row[xIdx]);
       const y = Math.round(row[yIdx]);
+      // TODO: can this condition ever be reached with now the max is computed above?
       if (x < 0 || x >= w || y < 0 || y >= h) {
         if (strict) throw new MCDParserError(`Pixel out of bounds: (${x}, ${y})`);
         continue;
