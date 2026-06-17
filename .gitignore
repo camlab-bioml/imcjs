@@ -18,3 +18,8 @@ dist
 dist-ssr
 
 coverage/
+
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+docs/public/api/
+

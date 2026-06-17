@@ -1,0 +1,11 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "navigationLinks": {
+    "Home": "/",
+  },
+  "out": "docs/public/api/",
+  "tsconfig": "tsconfig.json",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "readme": "none"
+}
