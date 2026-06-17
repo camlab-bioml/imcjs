@@ -1,8 +1,13 @@
 import { describe, it, expect } from "vitest";
+import { PNG } from "pngjs";
 import fs from "node:fs";
 import path from "node:path";
 
 import { MCDFile, MCDParserError } from "../src/mcd_file";
+
+function decodePng(buffer: Uint8Array) {
+  return PNG.sync.read(Buffer.from(buffer));
+}
 
 describe("MCD parser", () => {
    const filepath = path.join(
@@ -33,10 +38,6 @@ describe("MCD parser", () => {
     const [numChannels, height, width] = acq.shape;
     expect(acq.data.length).toBe(height * width * numChannels);
     expect(mcd.acquisitionShape(mcd.slides[0].acquisitions[0])).toStrictEqual([numChannels, height, width]);
-    
-
-    const slideRead = await mcd.readSlide(mcd.slides[0])
-    expect(slideRead instanceof Uint8Array).toBe(true);
 
   });
 
@@ -115,14 +116,63 @@ describe("MCD parser", () => {
       expect(acqRead.data.length).toBe(height * width * numChannels);
       expect(numChannels).toBe(11);
     }
-
-    const pano = await mcd.readPanorama(mcd.slides[0].panoramas[0])
-    expect(pano instanceof Uint8Array).toBe(true);
     
     expect(await mcd.readBeforeAblationImage(mcd.slides[0].acquisitions[0])).toBeNull();
     expect(await mcd.readAfterAblationImage(mcd.slides[0].acquisitions[0])).toBeNull();
 
   });
+
+  it("Read slide, panorama, and ablation images", async () => {
+    const filepath = path.join(
+      __dirname,
+      "fixtures",
+      "ffpe_w_ablation.mcd"
+    );
+    
+    const buffer = fs.readFileSync(filepath);
+    const file = new File([buffer], "ffpe_w_ablation.mcd", {type: "text/plain"}); 
+    
+    const mcd = await MCDFile.fromFile(file);
+
+    const slideRead = await mcd.readSlide(mcd.slides[0])
+    expect(slideRead instanceof Uint8Array).toBe(true);
+
+    if (slideRead instanceof Uint8Array) {
+      const png = decodePng(slideRead!);
+      expect(png.height).toBe(669);
+      expect(png.width).toBe(2002);
+    };
+
+    const pano = await mcd.readPanorama(mcd.slides[0].panoramas[0])
+    expect(pano instanceof Uint8Array).toBe(true);
+    
+    if (pano instanceof Uint8Array) {
+      const png = decodePng(pano!);
+      expect(png.height).toBe(874);
+      expect(png.width).toBe(2608);
+    };
+
+    const acq = mcd.readAcquisition(mcd.slides[0].acquisitions[0]);
+    const [numChannels, height, width] = acq.shape;
+  
+    const beforeAblation = await mcd.readBeforeAblationImage(mcd.slides[0].acquisitions[0]);
+    expect(beforeAblation).not.toBeNull();
+    if (beforeAblation instanceof Uint8Array) {
+      const png = decodePng(beforeAblation!);
+      expect(png.width).toBe(width);
+      expect(png.height).toBe(height);
+    };
+
+    const afterAblation = await mcd.readAfterAblationImage(mcd.slides[0].acquisitions[0]);
+    expect(afterAblation).not.toBeNull();
+    if (afterAblation instanceof Uint8Array) {
+      const png = decodePng(afterAblation!);
+      expect(png.width).toBe(width);
+      expect(png.height).toBe(height);
+    };
+
+
+    });
 
   it("Throw errors on malformed MCD", async () => {
     const filepath = path.join(
@@ -136,6 +186,8 @@ describe("MCD parser", () => {
     
     const mcd = await MCDFile.fromFile(file);
   
-    expect(() => mcd.schemaXml).toThrow(MCDParserError)});
+    expect(() => mcd.schemaXml).toThrow(MCDParserError);
+    expect(() => mcd.readAcquisition(mcd.slides[0].acquisitions[0])).toThrow(MCDParserError);
+    });
     
 });

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3-a1] - 2026-06-17
+
+### Fixed
+
+- Proper data offsets applied for slide, panorama, and ablation images to read into bitmap or decode from PNG array
+
 ## [0.1.2-a1] - 2026-06-10
 
 ### Fixed

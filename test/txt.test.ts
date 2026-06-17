@@ -116,7 +116,8 @@ describe("TXT parser", () => {
       
       const txt = await TXTFile.fromFile(file);
           
-      expect(() => txt.readAcquisition()).toThrow(MCDParserError)
+      expect(() => txt.readAcquisition()).toThrow(MCDParserError);
+      expect(() => txt.readAcquisition({strict: false})).not.toThrow(MCDParserError);
     });
 
 });

@@ -188,7 +188,14 @@ export class MCDFile {
    * Returns null if no image is available.
    */
   readSlideRaw(slide: Slide): Uint8Array | null {
-    return this._readImageBlob(slide._imageStartOffset, slide._imageEndOffset);
+    const start = slide._imageStartOffset == null
+    ? slide._imageStartOffset
+    : slide._imageStartOffset + 161;
+
+    const end = slide._imageEndOffset == null
+    ? slide._imageEndOffset
+    : slide._imageEndOffset - 1;
+    return this._readImageBlob(start, end);
   }
 
   /**
@@ -210,7 +217,14 @@ export class MCDFile {
    * Returns null if no image is available.
    */
   readPanoramaRaw(panorama: Panorama): Uint8Array | null {
-    return this._readImageBlob(panorama._imageStartOffset, panorama._imageEndOffset);
+    const start = panorama._imageStartOffset == null
+    ? panorama._imageStartOffset
+    : panorama._imageStartOffset + 161;
+
+    const end = panorama._imageEndOffset == null
+    ? panorama._imageEndOffset
+    : panorama._imageEndOffset - 1;
+    return this._readImageBlob(start, end);
   }
 
   /**
@@ -231,10 +245,14 @@ export class MCDFile {
    * Returns null if not available.
    */
   readBeforeAblationImageRaw(acquisition: Acquisition): Uint8Array | null {
-    return this._readImageBlob(
-      acquisition._beforeAblationImageStartOffset,
-      acquisition._beforeAblationImageEndOffset,
-    );
+    const start = acquisition._beforeAblationImageStartOffset == null
+    ? acquisition._beforeAblationImageStartOffset
+    : acquisition._beforeAblationImageStartOffset + 161;
+
+    const end = acquisition._beforeAblationImageEndOffset == null
+    ? acquisition._beforeAblationImageEndOffset
+    : acquisition._beforeAblationImageEndOffset - 1;
+    return this._readImageBlob(start, end);
   }
   
   /**
@@ -255,10 +273,14 @@ export class MCDFile {
    * Returns null if not available.
    */
   readAfterAblationImageRaw(acquisition: Acquisition): Uint8Array | null {
-    return this._readImageBlob(
-      acquisition._afterAblationImageStartOffset,
-      acquisition._afterAblationImageEndOffset,
-    );
+    const start = acquisition._afterAblationImageStartOffset == null
+    ? acquisition._afterAblationImageStartOffset
+    : acquisition._afterAblationImageStartOffset + 161;
+
+    const end = acquisition._afterAblationImageEndOffset == null
+    ? acquisition._afterAblationImageEndOffset
+    : acquisition._afterAblationImageEndOffset - 1;
+    return this._readImageBlob(start, end);
   }
 
   /**

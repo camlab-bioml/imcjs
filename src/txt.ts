@@ -114,10 +114,10 @@ export class TXTFile implements AcquisitionBase {
       const x = Math.round(row[xIdx]);
       const y = Math.round(row[yIdx]);
       // TODO: can this condition ever be reached with now the max is computed above?
-      if (x < 0 || x >= w || y < 0 || y >= h) {
-        if (strict) throw new MCDParserError(`Pixel out of bounds: (${x}, ${y})`);
-        continue;
-      }
+      // if (x < 0 || x >= w || y < 0 || y >= h) {
+      //   if (strict) throw new MCDParserError(`Pixel out of bounds: (${x}, ${y})`);
+      //   continue;
+      // }
       for (let ci = 0; ci < c; ci++) {
         out[ci * h * w + y * w + x] = row[channelIndices[ci]] ?? 0;
       }
