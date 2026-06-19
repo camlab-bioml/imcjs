@@ -1,6 +1,7 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
+  base: "/imcjs/",
   title: "imcjs: Parse IMC data files in the browser",
   description: "API Reference & User Manual",
 
@@ -23,7 +24,7 @@ export default defineConfig({
         {
           text: "API Reference",
           items: [
-            { text: "TypeDoc Output", link: "/api/index.html" }
+            { text: "TypeDoc Output", link: "./api/index.html" }
           ]
         }
       ]
