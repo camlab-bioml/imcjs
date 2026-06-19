@@ -1,7 +1,7 @@
 {
   "entryPoints": ["src/index.ts"],
   "navigationLinks": {
-    "Home": "/",
+    "Home": "../",
   },
   "out": "docs/public/api/",
   "tsconfig": "tsconfig.json",
