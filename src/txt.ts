@@ -77,7 +77,7 @@ export class TXTFile implements AcquisitionBase {
     const channelHeaders = this._channelHeaders();
     const allHeaders = this._getHeaders();
     const channelIndices = channelHeaders.map((h) => allHeaders.indexOf(h));
-
+    
     // Find X and Y column indices to determine image shape
     const xIdx = allHeaders.indexOf("X");
     const yIdx = allHeaders.indexOf("Y");

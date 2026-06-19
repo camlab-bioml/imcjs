@@ -33,7 +33,7 @@ export class MCDParser {
   get metadata(): string {
     return this.schemaXml;
   }
-
+  
   get schemaXmlXmlns(): string | null {
     return this._doc.documentElement?.getAttribute("xmlns") ?? null;
   }
@@ -51,6 +51,7 @@ export class MCDParser {
     let all: XElement[] = ns
       ? (Array.from(root.getElementsByTagNameNS(ns, tag)) as XElement[])
       : [];
+    
     if (all.length === 0) {
       all = Array.from(root.getElementsByTagName(tag)) as XElement[];
     }

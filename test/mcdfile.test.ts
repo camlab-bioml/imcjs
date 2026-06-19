@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { MCDFile, MCDParserError } from "../src/mcd_file";
+import { MCDParser } from "../src/mcd_parser";
 
 function decodePng(buffer: Uint8Array) {
   return PNG.sync.read(Buffer.from(buffer));
@@ -28,6 +29,8 @@ describe("MCD parser", () => {
     const mcd = MCDFile.fromArrayBuffer(arrayBuffer);
     expect(mcd.slides.length).toBe(1);
     expect(mcd.schemaXml).toContain("SAT_Test_chr10-h54h54-Gd158_2_18.mcd");
+    expect(new MCDParser(mcd.schemaXml).metadata).toStrictEqual(mcd.schemaXml);
+    expect(mcd.schemaXml).toContain(new MCDParser(mcd.schemaXml).metadataXmlns);
 
     expect(mcd.acquisitionIDs).toStrictEqual([18]);
     expect(mcd.acquisitions[0].id).toBe(18);
@@ -188,6 +191,13 @@ describe("MCD parser", () => {
   
     expect(() => mcd.schemaXml).toThrow(MCDParserError);
     expect(() => mcd.readAcquisition(mcd.slides[0].acquisitions[0])).toThrow(MCDParserError);
+    });
+
+    it("MCDParser can handle empty schema", async () => {
+    
+    const emptySchema = new MCDParser("<tag></tag>");
+    expect(emptySchema.metadataXmlns).toBeNull();
+    expect(emptySchema.parseSlides().length).toBe(0);
     });
     
 });

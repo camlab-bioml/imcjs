@@ -120,5 +120,22 @@ describe("TXT parser", () => {
       expect(() => txt.readAcquisition({strict: false})).not.toThrow(MCDParserError);
     });
 
+    it("Handles empty TXT files", async () => {
+      const filepath = path.join(
+        __dirname,
+        "fixtures",
+        "empty.txt"
+      );
+      
+      const buffer = fs.readFileSync(filepath);
+      const file = new File([buffer], "empty.txt", {type: "text/plain"}); 
+      
+      const txt = await TXTFile.fromFile(file);
+
+      expect(txt.channelNames).toStrictEqual([""])
+      expect(txt.readAcquisition().data.length).toBe(0);
+      
+    });
+
 });
 
