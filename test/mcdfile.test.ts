@@ -58,6 +58,11 @@ describe("MCD parser", () => {
     expect(acq.data.length).toBe(height * width * numChannels);
     expect(mcd.acquisitionShape(mcd.slides[0].acquisitions[0])).toStrictEqual([numChannels, height, width]);
     
+    // check row major order, assert that the first column of the second row is after the width index
+    expect(acq.data[width]).toBe(1022);
+    // check first column, second row, third channel
+    expect(acq.data[(2 * width * height) + width]).toBe(11.5);
+    
     // slice the acquisition, with indices in a non sequential order
     const acqSlide = mcd.readAcquisition(mcd.slides[0].acquisitions[0],
       {channels: [2, 4, 0]}

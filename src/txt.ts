@@ -69,7 +69,7 @@ export class TXTFile implements AcquisitionBase {
   /**
    * Reads the acquisition as a Float32Array with layout [c, y, x].
    *
-   * @param strict - If false, attempts recovery from corrupted/truncated data.
+   * @param options.strict - If false, attempts recovery from corrupted/truncated data.
    */
   readAcquisition(options?: { strict?: boolean }): NDArray {
     const strict = options?.strict ?? true;

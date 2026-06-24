@@ -120,10 +120,12 @@ export interface Slide {
   _imageEndOffset: number | null;
 }
 
-
+/** Basic structure for array-like data */
 export interface NDArray {
-  // float array image data
+  
+  /** Array-type data */
   data: Float32Array;
-  // shape
+  
+  /** Array of data shape, in the form (c, h, w) or (c, y, x) */
   shape: number[];
 }
