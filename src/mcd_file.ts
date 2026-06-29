@@ -29,7 +29,7 @@ export class MCDFile {
     const buffer = await file.arrayBuffer();
     return new MCDFile(buffer);
   }
-
+  
   /** Parse an MCD file from an ArrayBuffer (e.g. from fetch or FileReader). */
   static fromArrayBuffer(buffer: ArrayBuffer): MCDFile {
     return new MCDFile(buffer);
@@ -239,7 +239,7 @@ export class MCDFile {
     }
     return raw;
   }
-
+  
   /**
    * Reads the before-ablation image for an acquisition as raw bytes.
    * Returns null if not available.

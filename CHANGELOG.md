@@ -7,12 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.4-a1] - 2026-06-24
+## [0.1.4-a1] - 2026-06-29
 
 ### Fixed
 
 - Expose `NDArray` interface for API and docs
 - Edit typedoc for `TXTFile.readAcquisition` `options.strict`
+
+### Added
+
+- Basic `node` example in `examples`: Create an RGB gallery from a single MCD acquisition
 
 
 ## [0.1.3-a1] - 2026-06-17

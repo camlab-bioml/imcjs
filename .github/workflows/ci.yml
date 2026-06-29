@@ -30,3 +30,5 @@ jobs:
 
       - name: Run tests
         run: npm test
+      - name: Build examples
+        run: node examples/*.js

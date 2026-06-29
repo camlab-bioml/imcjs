@@ -20,7 +20,7 @@ describe("MCD parser", () => {
   it("Parses an MCD file from array buffer", async() => {
     
     const buffer = fs.readFileSync(filepath);
-
+    
     const arrayBuffer = buffer.buffer.slice(
       buffer.byteOffset,
       buffer.byteOffset + buffer.byteLength
@@ -31,6 +31,7 @@ describe("MCD parser", () => {
     expect(mcd.schemaXml).toContain("SAT_Test_chr10-h54h54-Gd158_2_18.mcd");
     expect(new MCDParser(mcd.schemaXml).metadata).toStrictEqual(mcd.schemaXml);
     expect(mcd.schemaXml).toContain(new MCDParser(mcd.schemaXml).metadataXmlns);
+    expect(new MCDParser(mcd.schemaXml).parseSlides().length).toBe(1);
 
     expect(mcd.acquisitionIDs).toStrictEqual([18]);
     expect(mcd.acquisitions[0].id).toBe(18);
@@ -144,7 +145,7 @@ describe("MCD parser", () => {
 
     const slideRead = await mcd.readSlide(mcd.slides[0])
     expect(slideRead instanceof Uint8Array).toBe(true);
-
+    
     if (slideRead instanceof Uint8Array) {
       const png = decodePng(slideRead!);
       expect(png.height).toBe(669);
