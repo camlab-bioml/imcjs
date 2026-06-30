@@ -10,7 +10,7 @@ function uint8ToDataURL(uint8, width, height, thumbWidth = 500, thumbHeight = nu
   if (!thumbWidth && !thumbHeight) {
     throw new Error("Provide either thumbWidth or thumbHeight");
   }
-
+  
   let outW, outH;
 
   if (thumbWidth) {
