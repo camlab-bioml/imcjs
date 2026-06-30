@@ -5,31 +5,38 @@ import fs from "node:fs";
 import { createCanvas } from "canvas";
 import { fileURLToPath } from 'url';
 import path from "path";
-import { open } from 'fs/promises';
 
-const percentile = (arr, value) => {
-  const currentIndex = 0;
-  const totalCount = arr.reduce((count, currentValue) => {
-    if (currentValue < value && value > 0) {
-      return count + 1;
-    } else if (currentValue === value) {
-      return count;
-    }
-    return count + 0;
-  }, currentIndex);
-  return (totalCount * 100) / arr.length;
-};
+function uint8ToDataURL(uint8, width, height, thumbWidth = 500, thumbHeight = null) {
+  if (!thumbWidth && !thumbHeight) {
+    throw new Error("Provide either thumbWidth or thumbHeight");
+  }
 
-function uint8ToDataURL(uint8, width, height) {
-  const canvas = createCanvas(width, height);
-  const ctx = canvas.getContext("2d");
+  let outW, outH;
 
-  const imageData = ctx.createImageData(width, height);
+  if (thumbWidth) {
+    outW = thumbWidth;
+    outH = Math.round((height / width) * thumbWidth);
+  } else {
+    outH = thumbHeight;
+    outW = Math.round((width / height) * thumbHeight);
+  }
+
+  const srcCanvas = createCanvas(width, height);
+  const srcCtx = srcCanvas.getContext("2d");
+
+  const imageData = srcCtx.createImageData(width, height);
   imageData.data.set(uint8);
+  srcCtx.putImageData(imageData, 0, 0);
 
-  ctx.putImageData(imageData, 0, 0);
+  const dstCanvas = createCanvas(outW, outH);
+  const dstCtx = dstCanvas.getContext("2d");
 
-  return canvas.toDataURL();
+  dstCtx.imageSmoothingEnabled = true;
+  dstCtx.imageSmoothingQuality = "high";
+
+  dstCtx.drawImage(srcCanvas, 0, 0, width, height, 0, 0, outW, outH);
+
+  return dstCanvas.toDataURL();
 }
 
 function recolourUint8ToRGB(data, width, height, r, g, b, opts = {}) {
@@ -61,36 +68,37 @@ function recolourUint8ToRGB(data, width, height, r, g, b, opts = {}) {
 }
 
 const fileLocation = path.join(path.dirname(path.dirname((fileURLToPath(import.meta.url)))), "/test/fixtures/test.mcd");
-const handle = await open(fileLocation, 'r');
-const { size } = await handle.stat();
-const buf = Buffer.allocUnsafe(size);
-await handle.read(buf, 0, size, 0);
-await handle.close();
 
-const arrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
-const mcd = MCDFile.fromArrayBuffer(arrayBuffer);
-const acq = mcd.readAcquisition(mcd.slides[0].acquisitions[0]);
-const labels = mcd.slides[0].acquisitions[0].channelLabels
+// node can parse a simple filepath string
+const mcd = await MCDFile.fromPath(fileLocation);
+const slides = await mcd.getSlides();
+const acq = await mcd.readAcquisition(slides[0].acquisitions[0]);
+const labels = slides[0].acquisitions[0].channelLabels
 
 const tileArray = [];
 
 for (const channel of labels) {
-    const indexChannel = mcd.slides[0].acquisitions[0].channelLabels.indexOf(channel);
+
+    const indexChannel = slides[0].acquisitions[0].channelLabels.indexOf(channel);
     let chanArray = acq.data.slice((indexChannel * acq.shape[2] * acq.shape[1]), ((indexChannel + 1) * acq.shape[2] * acq.shape[1]));
-
-    const scaledChannel = new Uint8Array(chanArray.length);
-    let scalingFactor = percentile(chanArray, 99);
     
-    for (let i = 0; i < chanArray.length; i++) {
-    const x = chanArray[i] / scalingFactor;
-    scaledChannel[i] = Math.round((x >= 1 ? 1 : x) * 255);
-    };
+    // set how intense signal should look relative to this value; 1 is fully saturated signal;
+    let scalingFactor = 10;
+    const invScale = 255 / scalingFactor;
+    const scaledChannel = new Uint8Array(chanArray.length);
 
-     tileArray.push({
-        data: recolourUint8ToRGB(scaledChannel, acq.shape[2], acq.shape[1], 0, 255, 255),
-        label: channel, width: acq.shape[2], height: acq.shape[1]});
+  for (let i = 0; i < chanArray.length; i++) {
+    const v = chanArray[i] * invScale;
+    scaledChannel[i] = v >= 255 ? 255 : v + 0.5;
+  }
+  
+  tileArray.push({
+    data: recolourUint8ToRGB(scaledChannel, acq.shape[2], acq.shape[1], 0, 255, 255),
+    label: channel, width: acq.shape[2], height: acq.shape[1]});
     
 }
+
+await mcd.close();
 
 const galleryTiles = tileArray.map(t => ({
     src: uint8ToDataURL(t.data, t.width, t.height), label: t.label}));
