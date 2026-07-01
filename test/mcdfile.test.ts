@@ -3,7 +3,7 @@ import { PNG } from "pngjs";
 import fs from "node:fs";
 import path from "node:path";
 
-import { MCDFile, MCDParserError } from "../src/mcd_file";
+import { MCDFile, MCDParserError, NodeFileByteSource } from "../src/mcd_file";
 import { MCDParser } from "../src/mcd_parser";
 
 function decodePng(buffer: Uint8Array) {
@@ -90,6 +90,7 @@ describe("MCD parser", async () => {
   it("Parses an MCD file from node path", async() => {
     
     const mcd = await MCDFile.fromPath(filepath);
+
     const slides = await mcd.getSlides()
     expect(slides.length).toBe(1);
     const schema = await mcd.getSchemaXml();
@@ -146,6 +147,17 @@ describe("MCD parser", async () => {
     await mcd.close();
 
   });
+  
+  it("Parse MCD from byte source", async () => {
+
+    const byteSource = await NodeFileByteSource.open(filepath);
+    const mcd = await MCDFile.fromByteSource(byteSource);
+    const slides = await mcd.getSlides()
+    expect(slides.length).toBe(1);
+    const schema = await mcd.getSchemaXml();
+    expect(schema).toContain("SAT_Test_chr10-h54h54-Gd158_2_18.mcd");
+    await mcd.close();
+  });
 
   it("Parse multi-ROI file", async () => {
     const filepath = path.join(
@@ -195,7 +207,7 @@ describe("MCD parser", async () => {
       "fixtures",
       "ffpe_w_ablation.mcd"
     );
-
+    
     const buffer = fs.readFileSync(filepath);
     const file = new File([buffer], "ffpe_w_ablation.mcd", {type: "text/plain"}); 
     const mcd = await MCDFile.fromFile(file);
