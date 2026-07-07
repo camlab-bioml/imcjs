@@ -18,6 +18,7 @@ export default defineConfig({
           items: [
             { text: "Getting Started", link: "/guides/getting-started" },
             { text: "Reading Acquisitions", link: "/guides/acquisitions" },
+            { text: "Slide, Panorama, & Ablation images", link: "/guides/supporting_images" },
           ]
         }
       ],

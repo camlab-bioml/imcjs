@@ -18,7 +18,7 @@ class BlobByteSource implements ByteSource {
 
 /** Node.js file-handle-backed source. Reads pull only the requested byte
  * range off disk. */
-class NodeFileByteSource implements ByteSource {
+export class NodeFileByteSource implements ByteSource {
   readonly size: number;
   private constructor(private readonly fd: any, size: number) {
     this.size = size;
@@ -209,46 +209,61 @@ export class MCDFile {
     return { data: out, shape: [outC, outH, outW] };
   }
 
-  /** Shape of an acquisition as [numChannels, height, width]. No I/O. */
+  /** Shape of an acquisition as [numChannels, height, width]. No I/O. 
+   *@param acquisition - The Acquisition object to read.
+  */
   acquisitionShape(acquisition: Acquisition): [number, number, number] {
     return [acquisition.numChannels, acquisition.heightPx ?? 0, acquisition.widthPx ?? 0];
   }
 
-  /** Reads a slide image as raw bytes (e.g. JPEG/PNG), or null if unavailable. */
+  /** Reads a slide image as raw bytes (e.g. JPEG/PNG), or null if unavailable. 
+   *@param slide - The Slide object to read.
+  */
   async readSlideRaw(slide: Slide): Promise<Uint8Array | null> {
     const start = slide._imageStartOffset == null ? slide._imageStartOffset : slide._imageStartOffset + 161;
     const end = slide._imageEndOffset == null ? slide._imageEndOffset : slide._imageEndOffset - 1;
     return this._readImageBlob(start, end);
   }
+  
 
-  /** Reads a slide image and returns an ImageBitmap (browser) or Uint8Array (Node). */
-  async readSlide(slide: Slide): Promise<ImageBitmap | Uint8Array | null> {
+  /** Reads a slide image and returns an ImageBitmap (if browser) or Uint8Array if raw data are requested. 
+   * @param acquisition - The Acquisition object to read.
+   * @param return_raw - Returns an image bitmap if browser-supporte or false, or a PNG binary Uint8Array otherwise.  
+  */
+  async readSlide(slide: Slide, return_raw: boolean=true): Promise<ImageBitmap | Uint8Array | null> {
     const raw = await this.readSlideRaw(slide);
     if (!raw) return null;
-    if (typeof createImageBitmap !== "undefined") {
+    if (typeof createImageBitmap !== "undefined" && return_raw !== true) {
       return createImageBitmap(new Blob([Uint8Array.from(raw)]));
     }
     return raw;
   }
 
-  /** Reads a panorama image as raw bytes, or null if unavailable. */
+  /** Reads a panorama image as raw bytes, or null if unavailable. 
+   * @param panorama - The Panorama object to read.
+  */
   async readPanoramaRaw(panorama: Panorama): Promise<Uint8Array | null> {
     const start = panorama._imageStartOffset == null ? panorama._imageStartOffset : panorama._imageStartOffset + 161;
     const end = panorama._imageEndOffset == null ? panorama._imageEndOffset : panorama._imageEndOffset - 1;
     return this._readImageBlob(start, end);
   }
 
-  /** Reads a panorama image and returns an ImageBitmap (browser) or Uint8Array (Node). */
-  async readPanorama(panorama: Panorama): Promise<ImageBitmap | Uint8Array | null> {
+  /** Reads a panorama image and returns an ImageBitmap (if browser) or Uint8Array if raw data are requested. 
+   * @param panorama - The Panorama object to read.
+   * @param return_raw - Returns an image bitmap if browser-supporte or false, or a PNG binary Uint8Array otherwise.  
+  */
+  async readPanorama(panorama: Panorama, return_raw: boolean=true): Promise<ImageBitmap | Uint8Array | null> {
     const raw = await this.readPanoramaRaw(panorama);
     if (!raw) return null;
-    if (typeof createImageBitmap !== "undefined") {
+    if (typeof createImageBitmap !== "undefined" && return_raw !== true) {
       return createImageBitmap(new Blob([Uint8Array.from(raw)]));
     }
     return raw;
   }
 
-  /** Reads the before-ablation image for an acquisition as raw bytes. */
+  /** Reads the before-ablation image for an acquisition as raw bytes. 
+   * @param acquisition - The Acquisition object to read.
+  */
   async readBeforeAblationImageRaw(acquisition: Acquisition): Promise<Uint8Array | null> {
     const start =
       acquisition._beforeAblationImageStartOffset == null
@@ -261,17 +276,22 @@ export class MCDFile {
     return this._readImageBlob(start, end);
   }
 
-  /** Reads the before-ablation image and returns an ImageBitmap or Uint8Array. */
-  async readBeforeAblationImage(acquisition: Acquisition): Promise<ImageBitmap | Uint8Array | null> {
+  /** Reads the before-ablation image and returns an ImageBitmap (if browser) or Uint8Array if raw data are requested. 
+   * @param acquisition - The Acquisition object to read.
+   * @param return_raw - Returns an image bitmap if browser-supporte or false, or a PNG binary Uint8Array otherwise.  
+  */
+  async readBeforeAblationImage(acquisition: Acquisition, return_raw: boolean=true): Promise<ImageBitmap | Uint8Array | null> {
     const raw = await this.readBeforeAblationImageRaw(acquisition);
     if (!raw) return null;
-    if (typeof createImageBitmap !== "undefined") {
+    if (typeof createImageBitmap !== "undefined" && return_raw !== true) {
       return createImageBitmap(new Blob([Uint8Array.from(raw)]));
     }
     return raw;
   }
 
-  /** Reads the after-ablation image for an acquisition as raw bytes. */
+  /** Reads the after-ablation image for an acquisition as raw bytes. 
+   *  @param acquisition - The Acquisition object to read.
+  */
   async readAfterAblationImageRaw(acquisition: Acquisition): Promise<Uint8Array | null> {
     const start =
       acquisition._afterAblationImageStartOffset == null
@@ -284,11 +304,14 @@ export class MCDFile {
     return this._readImageBlob(start, end);
   }
 
-  /** Reads the after-ablation image and returns an ImageBitmap or Uint8Array. */
-  async readAfterAblationImage(acquisition: Acquisition): Promise<ImageBitmap | Uint8Array | null> {
+  /** Reads the after-ablation image and returns an ImageBitmap (if browser) or Uint8Array if raw data are requested. 
+   * @param acquisition - The Acquisition object to read.
+   * @param return_raw - Returns an image bitmap if browser-supporte or false, or a PNG binary Uint8Array otherwise.  
+  */
+  async readAfterAblationImage(acquisition: Acquisition, return_raw: boolean=true): Promise<ImageBitmap | Uint8Array | null> {
     const raw = await this.readAfterAblationImageRaw(acquisition);
     if (!raw) return null;
-    if (typeof createImageBitmap !== "undefined") {
+    if (typeof createImageBitmap !== "undefined" && return_raw !== true) {
       return createImageBitmap(new Blob([Uint8Array.from(raw)]));
     }
     return raw;
@@ -365,7 +388,7 @@ export class MCDFile {
     }
     return -1;
   }
-
+  
   /** Reads bytes [start, end) from the source as an aligned Float32Array. */
   private async _readFloat32Range(start: number, end: number): Promise<Float32Array> {
     if (start < 0 || end > this._source.size || start >= end) {
