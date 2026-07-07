@@ -2,7 +2,7 @@ import { defineConfig } from "vitepress";
 
 export default defineConfig({
   base: "/imcjs/",
-  title: "imcjs: Parse IMC data files in the browser",
+  title: "imcjs: Parse Imaging Mass Cytometry (IMC) MCD and TXT files in the browser or with Node",
   description: "API Reference & User Manual",
 
   themeConfig: {
@@ -17,6 +17,8 @@ export default defineConfig({
           text: "Usage",
           items: [
             { text: "Getting Started", link: "/guides/getting-started" },
+            { text: "Reading Acquisitions", link: "/guides/acquisitions" },
+            { text: "Slide, Panorama, & Ablation images", link: "/guides/supporting_images" },
           ]
         }
       ],

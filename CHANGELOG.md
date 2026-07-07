@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0-a1] - 2026-07-07
+
+### Changed
+
+- Implement byte source chunking for large MCD files without using contiguous array buffers
+- Add parameter to return raw PNG binary sequence for slide, panorama, and ablation images
+
 ## [0.1.4-a1] - 2026-06-29
 
 ### Fixed

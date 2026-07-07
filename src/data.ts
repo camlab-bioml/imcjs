@@ -129,3 +129,15 @@ export interface NDArray {
   /** Array of data shape, in the form (c, h, w) or (c, y, x) */
   shape: number[];
 }
+
+/**
+ * Minimal random-access byte source. Implemented separately for browser
+ * (File/Blob) and Node.js (file handle) so MCDFile never has to hold the
+ * whole file in memory.
+ */
+export interface ByteSource {
+  readonly size: number;
+  /** Read bytes [start, end) and return them as a Uint8Array. */
+  read(start: number, end: number): Promise<Uint8Array>;
+  close?(): Promise<void>;
+}
