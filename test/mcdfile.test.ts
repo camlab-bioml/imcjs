@@ -2,13 +2,68 @@ import { describe, it, expect } from "vitest";
 import { PNG } from "pngjs";
 import fs from "node:fs";
 import path from "node:path";
+import http from "http";
 
 import { MCDFile, MCDParserError, NodeFileByteSource } from "../src/mcd_file";
 import { MCDParser } from "../src/mcd_parser";
+import { URLByteSource } from "../src/source";
 
 function decodePng(buffer: Uint8Array) {
   return PNG.sync.read(Buffer.from(buffer));
-}
+};
+
+function serveRangeFile(path: string, allow_ranges: boolean = true,
+  use_content_range: boolean = true) {
+
+  const server = http.createServer((req, res) => {
+    const stat = fs.statSync(path);
+    const size = stat.size;
+
+    const range = req.headers.range;
+
+    if (!range) {
+      res.writeHead(200, {
+        "Content-Length": size,
+      });
+
+      fs.createReadStream(path).pipe(res);
+      return;
+    }
+
+    const match = range.match(/bytes=(\d+)-(\d*)/);
+
+    if (!match) {
+      res.writeHead(416);
+      return;
+    }
+
+    const start = Number(match[1]);
+    const end = match[2]
+      ? Number(match[2])
+      : size - 1;
+
+    if (allow_ranges) {
+      let contentRange = use_content_range ? `bytes ${start}-${end}/${size}` : "";
+      res.writeHead(206, {
+      "Content-Range": contentRange,
+      "Accept-Ranges": "bytes",
+      "Content-Length": end - start + 1,
+    });
+    }
+
+    fs.createReadStream(path, {
+      start,
+      end,
+    }).pipe(res);
+  });
+
+  return new Promise<string>((resolve) => {
+    server.listen(0, () => {
+      const address = server.address() as any;
+      resolve(`http://localhost:${address.port}/file.mcd`);
+    });
+  });
+};
 
 describe("MCD parser", async () => {
    const filepath = path.join(
@@ -159,6 +214,18 @@ describe("MCD parser", async () => {
     await mcd.close();
   });
 
+  it("Parse MCD from URL HTTP source", async () => {
+
+    const url = await serveRangeFile(filepath);
+
+    const mcd = await MCDFile.fromURL(url);
+    const slides = await mcd.getSlides()
+    expect(slides.length).toBe(1);
+    const schema = await mcd.getSchemaXml();
+    expect(schema).toContain("SAT_Test_chr10-h54h54-Gd158_2_18.mcd");
+    await mcd.close();
+  });
+
   it("Parse multi-ROI file", async () => {
     const filepath = path.join(
       __dirname,
@@ -277,5 +344,17 @@ describe("MCD parser", async () => {
     expect(emptySchema.metadataXmlns).toBeNull();
     expect(emptySchema.parseSlides().length).toBe(0);
     });
+
+  it("Error on MCD parsing from URL without ranges permitted", async () => {
+
+    const url = await serveRangeFile(filepath, false);
+    await expect(URLByteSource.open(url)).rejects.toThrow(Error);
+  });
+
+  it("Error on MCD parsing from URL without content range", async () => {
+
+    const url = await serveRangeFile(filepath, true, false);
+    await expect(URLByteSource.open(url)).rejects.toThrow(Error);
+  });
     
 });
