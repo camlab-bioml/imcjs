@@ -1,6 +1,6 @@
 {
   "name": "imcjs",
-  "version": "0.2.0-a1",
+  "version": "0.3.0-a1",
   "description": "Parse Imaging Mass Cytometry (IMC) MCD and TXT files in the browser or with Node",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -42,9 +42,13 @@
     "canvas": "^3.2.3",
     "esbuild": "^0.25.0",
     "fast-xml-parser": "^5.8.0",
+    "nanoid": "^6.0.1",
     "pngjs": "^7.0.0",
+    "postcss": "^8.5.28",
+    "source-map-js": "^1.2.2",
     "typedoc": "^0.28.19",
     "vite": "^6.4.3",
-    "vitepress": "^1.6.4"
+    "vitepress": "^1.6.4",
+    "xmldom": "^0.6.0"
   }
 }

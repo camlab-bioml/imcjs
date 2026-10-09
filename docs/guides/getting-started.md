@@ -30,6 +30,16 @@ function handleFileUpload(e) {
 }
 ```
 
+### From remote URL
+
+**NOTE**: this feature is experimental and not part of the original Python API. 
+
+```
+import { MCDFile } from "imcjs";
+
+const mcd = await MCDFile.fromURL("https://borealisdata.ca/api/access/datafile/833251");
+```
+
 ### Read an MCD acquisition
 ```
 # Read the first acquisition, and view the array data and shape (C, H, W)
