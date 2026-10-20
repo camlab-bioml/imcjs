@@ -21,7 +21,7 @@ Build: `npm run build`
 ```
 import { MCDFile } from "imcjs";
 
-const mcd = await MCDFile.fromPath(string-path_to_mcd);
+const mcd = await MCDFile.fromPath(string_path_to_mcd);
 ```
 
 ### Browser File API
@@ -35,6 +35,16 @@ function handleFileUpload(e) {
     const mcd = await MCDFile.fromFile(filesUploaded[0]);
 
 }
+```
+
+### From remote URL
+
+**NOTE**: this feature is experimental and not part of the original Python API. 
+
+```
+import { MCDFile } from "imcjs";
+
+const mcd = await MCDFile.fromURL("https://borealisdata.ca/api/access/datafile/833251");
 ```
 
 ### Read an MCD acquisition

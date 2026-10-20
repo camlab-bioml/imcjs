@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0-a1] - 2026-10-09
+
+### Added
+
+- Ability to read MCD files from remote URL using HTTP ranges
+
+### Fixed
+
+- dependencies from `dependabot`
+
 ## [0.2.0-a1] - 2026-07-07
 
 ### Changed

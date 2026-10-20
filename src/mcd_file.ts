@@ -1,6 +1,7 @@
 import type { Acquisition, Panorama, Slide, NDArray, ByteSource } from "./data";
 import { MCDParser, MCDParserError } from "./mcd_parser";
 export { MCDParserError };
+import { URLByteSource } from "./source";
 
 
 /** Browser/Blob-backed source. Reads are lazy `Blob.slice()` calls — nothing
@@ -69,6 +70,11 @@ export class MCDFile {
   /** Open from a custom ByteSource (e.g. a network-backed range-reader). */
   static fromByteSource(source: ByteSource): MCDFile {
     return new MCDFile(source);
+  }
+
+  /** Open an MCD file from a remote URL using HTTP range requests. */
+  static async fromURL(url: string): Promise<MCDFile> {
+  return new MCDFile(await URLByteSource.open(url));
   }
   
   /** Release any underlying file handle (Node.js). Safe no-op for Blob sources. */
@@ -156,7 +162,7 @@ export class MCDFile {
     if (start === 0 && end === 0) {
       throw new MCDParserError(`Acquisition ${acquisition.id} has no data offsets.`);
     }
-
+    
     const signalC = acquisition.numChannels;
     const h = acquisition.heightPx ?? 0;
     const w = acquisition.widthPx ?? 0;
