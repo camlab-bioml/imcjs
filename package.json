@@ -38,7 +38,7 @@
     "vitest": "^4.1.8"
   },
   "dependencies": {
-    "@xmldom/xmldom": "^0.9.10",
+    "@xmldom/xmldom": "^0.9.12",
     "canvas": "^3.2.3",
     "esbuild": "^0.25.0",
     "fast-xml-parser": "^5.8.0",
@@ -48,7 +48,6 @@
     "source-map-js": "^1.2.2",
     "typedoc": "^0.28.19",
     "vite": "^6.4.3",
-    "vitepress": "^1.6.4",
-    "xmldom": "^0.6.0"
+    "vitepress": "^1.6.4"
   }
 }
