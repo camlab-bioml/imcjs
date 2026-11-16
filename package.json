@@ -38,6 +38,7 @@
     "vitest": "^4.1.8"
   },
   "dependencies": {
+    "@vitest/mocker": "^5.1.0",
     "@xmldom/xmldom": "^0.9.12",
     "canvas": "^3.2.3",
     "esbuild": "^0.25.0",
